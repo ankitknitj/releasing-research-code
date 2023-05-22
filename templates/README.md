@@ -63,7 +63,7 @@ Metadata refers to the dataset containing certain meta features including archit
 **Note.** For Imagenet experiments, just uncomment the **prepare_imagenet_dataset()**, **prepare_imagenet_modeldict()** and **dummy input** definition in _extract_metadata.py_
 
 
-## Training of Accuracy prediction model and Evaluation
+## Training of Accuracy prediction model and Evaluation (Meta Compression)
 
 We use gradient boosted decision trees as the accuracy prediction model due to their good performance in regression tasks for small datasets.
 
@@ -76,28 +76,46 @@ To train and evaluate the XGBoost model on the extracted metadata, run:
 python meta_prediction.py
 ```
 
+For comparison, we also report performance of an empirical risk minimization (ERM) approach, which recommends the compression method that works best on a dataset of problems. In such a setting, each problem consists of a pretrained model and labelled data samples for fine tuning and performance evaluation. Here, the best compression method invlolves quantizing to 4 bits with LSQ and we adapt Slim pruning rate to match the compression level provided in the constraint.
+
+## Training of Accuracy prediction model and Evaluation (Static ERM)
+
+We use gradient boosted decision trees as the accuracy prediction model in this case as well. 
+
+In this case, we use Slim pruning and LSQ Quantization to 4 bits as the optimal policy. 
+
+To train and evaluate the XGBoost model on the extracted metadata, run:
+
+**Note.** _Before running the below script, change the path in prepare_dataset function to the location where your extracted metadata is stored. _
+```eval
+python meta_prediction_baseline.py
+```
 
 ## Pre-trained Models
 
 You can download pretrained models here:
 
-- [My awesome model](https://drive.google.com/mymodel.pth) trained on ImageNet using parameters x,y,z. 
+- [Pre-trained Models](https://drive.google.com/drive/folders/1oiAO_ThdBez-p5fJzT3Q6_L2tUCL44zf?usp=share_link). This folder contains pretrained models for IDEAL scenario as well as all other scenarios (See results below).  Just replace the checkpoint path in extract_metadata.py to reproduce the results, where IDEAL scenario refers to the case when some of the train data is hidden during the training phase and used as the evaluation data. 
 
->📋  Give a link to where/how the pretrained models can be downloaded and how they were trained (if applicable).  Alternatively you can have an additional column in your results table with a link to the models.
 
 ## Results
 
-Our model achieves the following performance on :
+ Recommendation performance of prediction: 
 
-### [Image Classification on ImageNet](https://paperswithcode.com/sota/image-classification-on-imagenet)
 
-| Model name         | Top 1 Accuracy  | Top 5 Accuracy |
-| ------------------ |---------------- | -------------- |
-| My awesome model   |     85%         |      95%       |
+<img width="600" alt="Screenshot 2023-05-19 at 19 56 44" src="https://github.com/ankitknitj/readme/assets/36541665/b8e1acc4-f300-44b2-ae25-0db60ef16c37">
 
->📋  Include a table of results from your paper, and link back to the leaderboard for clarity and context. If your main result is a figure, include that figure and link to the command or notebook to reproduce it. 
+MAE of the predictor g trained for different compression algorithms: 
+
+<img width="628" alt="Screenshot 2023-05-19 at 19 56 34" src="https://github.com/ankitknitj/readme/assets/36541665/50d11b95-68d6-4c61-9b29-0cade0093b3c">
+
+Prediction performance for different data selection strategies: 
+
+<img width="628" alt="Screenshot 2023-05-22 at 19 08 09" src="https://github.com/ankitknitj/readme/assets/36541665/dc6c7fbc-d21b-49f7-b982-8337ae65ef73">
+
 
 
 ## Contributing
 
->📋  Pick a licence and describe how to contribute to your code repository. 
+This is a research reference implementation and is treated as a one-time code drop. As such, we do not accept outside code contributions in the form of pull requests.
+
